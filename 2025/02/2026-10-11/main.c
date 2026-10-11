@@ -12,10 +12,25 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+int is_repeating_sequence(uint64_t id, uint64_t seqlen) {
+	uint64_t div = pow(10, seqlen);
+	uint64_t seq = id % div;
+	for (; id > 0; id /= div) {
+		if (id % div != seq) {
+			return 0;
+		}
+	}
+	return 1;
+}
+
 int is_invalid(uint64_t id) {
 	int digits = (int)log10(id) + 1;
-	uint64_t div = pow(10, digits/2);
-	return id%div == id/div;
+	for (int n = 1; n <= digits/2; ++n) {
+		if (digits%n == 0 && is_repeating_sequence(id, n)) {
+			return 1;
+		}
+	}
+	return 0;
 }
 
 int main(void) {
