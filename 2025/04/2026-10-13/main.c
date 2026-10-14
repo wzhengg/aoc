@@ -35,6 +35,17 @@ int is_accessible(int r, int c) {
 	return count < 4;
 }
 
+int remove_roll(int r, int c) {
+	if (r < 0 || r >= N || c < 0 || c >= N || grid[r][c] != '@' || !is_accessible(r, c)) {
+		return 0;
+	}
+
+	grid[r][c] = '.';
+
+	return 1 + remove_roll(r-1, c) + remove_roll(r+1, c) + remove_roll(r, c-1) + remove_roll(r, c+1) +
+		remove_roll(r-1, c-1) + remove_roll(r-1, c+1) + remove_roll(r+1, c-1) + remove_roll(r+1, c+1);
+}
+
 int main(void) {
 	int fd = open("input.txt", O_RDONLY);
 	if (fd == -1) {
@@ -68,8 +79,8 @@ int main(void) {
 
 	for (int r = 0; r < N; ++r) {
 		for (int c = 0; c < N; ++c) {
-			if (grid[r][c] == '@' && is_accessible(r, c)) {
-				++count;
+			if (grid[r][c] == '@') {
+				count += remove_roll(r, c);
 			}
 		}
 	}
